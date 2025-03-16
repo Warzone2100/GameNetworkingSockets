@@ -31,6 +31,7 @@ set(GNS_COMMON_SRCS
 	)
 
 set(GNS_CLIENTLIB_SRCS
+	"steamnetworkingsockets/isteamnetworkingutils.cpp"
 	"steamnetworkingsockets/steamnetworkingsockets_stats.cpp"
 	"steamnetworkingsockets/steamnetworkingsockets_thinker.cpp"
 	"steamnetworkingsockets/clientlib/csteamnetworkingsockets.cpp"

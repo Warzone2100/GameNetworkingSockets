@@ -222,11 +222,11 @@ struct SteamNetworkingIPAddr
 	/// to avoid truncation
 	///
 	/// See also SteamNetworkingIdentityRender
-	inline void ToString( char *buf, size_t cbBuf, bool bWithPort ) const;
+	void ToString( char *buf, size_t cbBuf, bool bWithPort ) const;
 
 	/// Parse an IP address and optional port.  If a port is not present, it is set to 0.
 	/// (This means that you cannot tell if a zero port was explicitly specified.)
-	inline bool ParseString( const char *pszStr );
+	bool ParseString( const char *pszStr );
 
 	/// RFC4038, section 4.2
 	struct IPv4MappedAddress {
