@@ -44,6 +44,22 @@
 	#endif
 #endif
 
+#if defined( STEAMNETWORKINGSOCKETS_STATIC_LINK )
+	#define STEAMNETWORKINGSOCKETS_MEMBER_INTERFACE
+#elif defined( STEAMNETWORKINGSOCKETS_FOREXPORT )
+	#if defined( _WIN32 ) || defined( __ORBIS__ ) || defined( __PROSPERO__ )
+		#define STEAMNETWORKINGSOCKETS_MEMBER_INTERFACE __declspec( dllexport )
+	#else
+		#define STEAMNETWORKINGSOCKETS_MEMBER_INTERFACE __attribute__((visibility("default")))
+	#endif
+#else
+	#ifdef _WIN32
+		#define STEAMNETWORKINGSOCKETS_MEMBER_INTERFACE __declspec( dllimport )
+	#else
+		#define STEAMNETWORKINGSOCKETS_MEMBER_INTERFACE
+	#endif
+#endif
+
 #if defined( VALVE_CALLBACK_PACK_SMALL )
 #pragma pack( push, 4 )
 #elif defined( VALVE_CALLBACK_PACK_LARGE )
@@ -222,11 +238,11 @@ struct SteamNetworkingIPAddr
 	/// to avoid truncation
 	///
 	/// See also SteamNetworkingIdentityRender
-	inline void ToString( char *buf, size_t cbBuf, bool bWithPort ) const;
+	STEAMNETWORKINGSOCKETS_MEMBER_INTERFACE void ToString( char *buf, size_t cbBuf, bool bWithPort ) const;
 
 	/// Parse an IP address and optional port.  If a port is not present, it is set to 0.
 	/// (This means that you cannot tell if a zero port was explicitly specified.)
-	inline bool ParseString( const char *pszStr );
+	STEAMNETWORKINGSOCKETS_MEMBER_INTERFACE bool ParseString( const char *pszStr );
 
 	/// RFC4038, section 4.2
 	struct IPv4MappedAddress {
@@ -248,7 +264,7 @@ struct SteamNetworkingIPAddr
 
 	/// Classify address as FakeIP.  This function never returns
 	/// k_ESteamNetworkingFakeIPType_Invalid.
-	ESteamNetworkingFakeIPType GetFakeIPType() const;
+	STEAMNETWORKINGSOCKETS_MEMBER_INTERFACE ESteamNetworkingFakeIPType GetFakeIPType() const;
 
 	/// Return true if we are a FakeIP
 	bool IsFakeIP() const { return GetFakeIPType() > k_ESteamNetworkingFakeIPType_NotFake; }
@@ -310,14 +326,14 @@ struct SteamNetworkingIdentity
 	/// k_cchMaxString bytes big to avoid truncation.
 	///
 	/// See also SteamNetworkingIPAddrRender
-	void ToString( char *buf, size_t cbBuf ) const;
+	STEAMNETWORKINGSOCKETS_MEMBER_INTERFACE void ToString( char *buf, size_t cbBuf ) const;
 
 	/// Parse back a string that was generated using ToString.  If we don't understand the
 	/// string, but it looks "reasonable" (it matches the pattern type:<type-data> and doesn't
 	/// have any funky characters, etc), then we will return true, and the type is set to
 	/// k_ESteamNetworkingIdentityType_UnknownType.  false will only be returned if the string
 	/// looks invalid.
-	bool ParseString( const char *pszStr );
+	STEAMNETWORKINGSOCKETS_MEMBER_INTERFACE bool ParseString( const char *pszStr );
 
 	// Max sizes
 	enum {

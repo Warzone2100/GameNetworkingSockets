@@ -97,6 +97,7 @@ set(GNS_COMMON_SRCS
 	"common/steamid.cpp"
 	"steamnetworkingsockets/steamnetworkingsockets_certs.cpp"
 	"steamnetworkingsockets/steamnetworkingsockets_certstore.cpp"
+	"steamnetworkingsockets/isteamnetworkingutils.cpp"
 	"steamnetworkingsockets/steamnetworkingsockets_shared.cpp"
 	"tier0/dbg.cpp"
 	"tier0/platformtime.cpp"
