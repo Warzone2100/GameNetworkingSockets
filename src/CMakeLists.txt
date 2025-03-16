@@ -257,7 +257,7 @@ macro(set_clientlib_target_properties GNS_TARGET)
 			)
 	endif()
 
-	target_compile_features(${GNS_TARGET} PUBLIC c_std_99 cxx_std_17)
+	target_compile_features(${GNS_TARGET} PRIVATE cxx_std_17 PUBLIC c_std_99 INTERFACE cxx_std_14)
 
 	if(CMAKE_CXX_COMPILER_ID MATCHES "GNU"
 			OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
