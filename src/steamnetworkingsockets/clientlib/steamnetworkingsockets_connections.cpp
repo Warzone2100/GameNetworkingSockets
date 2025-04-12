@@ -1240,11 +1240,15 @@ void CSteamNetworkConnectionBase::SetCryptoCipherList()
 			// V
 		case 0:
 			// Not allowed
-			if (AES_GCM_CipherContext::IsAvailable())
+			if ( AES_GCM_CipherContext::IsAvailable() )
 			{
 				m_msgCryptLocal.add_ciphers( k_ESteamNetworkingSocketsCipher_AES_256_GCM );
 			}
-			if (m_msgCryptLocal.ciphers_size() == 0)
+			if ( ChaCha20_Poly1305_CipherContext::IsAvailable() )
+			{
+				m_msgCryptLocal.add_ciphers( k_ESteamNetworkingSocketsCipher_CHACHA20_POLY1305 );
+			}
+			if ( m_msgCryptLocal.ciphers_size() == 0 )
 			{
 				ConnectionState_ProblemDetectedLocally( k_ESteamNetConnectionEnd_Remote_BadCrypt, "No crypto ciphers available, although the connection requires encryption" );
 			}
@@ -1252,9 +1256,13 @@ void CSteamNetworkConnectionBase::SetCryptoCipherList()
 
 		case 1:
 			// Allowed, but prefer encrypted
-			if (AES_GCM_CipherContext::IsAvailable())
+			if ( AES_GCM_CipherContext::IsAvailable() )
 			{
 				m_msgCryptLocal.add_ciphers( k_ESteamNetworkingSocketsCipher_AES_256_GCM );
+			}
+			if ( ChaCha20_Poly1305_CipherContext::IsAvailable() )
+			{
+				m_msgCryptLocal.add_ciphers( k_ESteamNetworkingSocketsCipher_CHACHA20_POLY1305 );
 			}
 			m_msgCryptLocal.add_ciphers( k_ESteamNetworkingSocketsCipher_NULL );
 			break;
@@ -1262,9 +1270,13 @@ void CSteamNetworkConnectionBase::SetCryptoCipherList()
 		case 2:
 			// Allowed, preferred
 			m_msgCryptLocal.add_ciphers( k_ESteamNetworkingSocketsCipher_NULL );
-			if (AES_GCM_CipherContext::IsAvailable())
+			if ( AES_GCM_CipherContext::IsAvailable() )
 			{
 				m_msgCryptLocal.add_ciphers( k_ESteamNetworkingSocketsCipher_AES_256_GCM );
+			}
+			if ( ChaCha20_Poly1305_CipherContext::IsAvailable() )
+			{
+				m_msgCryptLocal.add_ciphers( k_ESteamNetworkingSocketsCipher_CHACHA20_POLY1305 );
 			}
 			break;
 
@@ -1567,6 +1579,10 @@ ESteamNetConnectionEnd CSteamNetworkConnectionBase::RecvCryptoHandshake(
 		{
 			m_msgCryptRemote.add_ciphers( k_ESteamNetworkingSocketsCipher_AES_256_GCM );
 		}
+		if ( ChaCha20_Poly1305_CipherContext::IsAvailable() )
+		{
+			m_msgCryptRemote.add_ciphers( k_ESteamNetworkingSocketsCipher_CHACHA20_POLY1305 );
+		}
 	}
 
 	// We need our own cert.  If we don't have one by now, then we might try generating one
@@ -1629,7 +1645,7 @@ ESteamNetConnectionEnd CSteamNetworkConnectionBase::FinishCryptoHandshake( bool 
 			break;
 		}
 	}
-	switch (m_eNegotiatedCipher )
+	switch ( m_eNegotiatedCipher )
 	{
 		default:
 		case k_ESteamNetworkingSocketsCipher_INVALID:
@@ -1642,6 +1658,10 @@ ESteamNetConnectionEnd CSteamNetworkConnectionBase::FinishCryptoHandshake( bool 
 
 		case k_ESteamNetworkingSocketsCipher_AES_256_GCM:
 			m_cbEncryptionOverhead = k_cbAESGCMTagSize;
+			break;
+
+		case k_ESteamNetworkingSocketsCipher_CHACHA20_POLY1305:
+			m_cbEncryptionOverhead = k_cbChaCha20Poly1305TagSize;
 			break;
 	}
 
@@ -1784,6 +1804,22 @@ ESteamNetConnectionEnd CSteamNetworkConnectionBase::FinishCryptoHandshake( bool 
 			if (
 				!pSend->Init( cryptKeySend.m_buf, cryptKeySend.k_nSize, m_cryptIVSend.k_nSize, k_cbAESGCMTagSize )
 				|| !pRecv->Init( cryptKeyRecv.m_buf, cryptKeyRecv.k_nSize, m_cryptIVRecv.k_nSize, k_cbAESGCMTagSize ) )
+			{
+				V_strcpy_safe( errMsg, "Error initializing crypto" );
+				return k_ESteamNetConnectionEnd_Remote_BadCrypt;
+			}
+		} break;
+
+		case k_ESteamNetworkingSocketsCipher_CHACHA20_POLY1305:
+		{
+			auto* pSend = new ChaCha20_Poly1305_EncryptContext;
+			auto* pRecv = new ChaCha20_Poly1305_DecryptContext;
+			m_pCryptContextSend.reset( pSend );
+			m_pCryptContextRecv.reset( pRecv );
+
+			if (
+				!pSend->Init( cryptKeySend.m_buf, cryptKeySend.k_nSize, m_cryptIVSend.k_nSize, k_cbChaCha20Poly1305TagSize )
+				|| !pRecv->Init( cryptKeyRecv.m_buf, cryptKeyRecv.k_nSize, m_cryptIVRecv.k_nSize, k_cbChaCha20Poly1305TagSize ) )
 			{
 				V_strcpy_safe( errMsg, "Error initializing crypto" );
 				return k_ESteamNetConnectionEnd_Remote_BadCrypt;
