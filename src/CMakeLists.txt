@@ -281,9 +281,13 @@ function(gns_set_target_crypto_properties TGT)
 	endif()
 
 	if(USE_CRYPTO STREQUAL "libsodium" OR USE_CRYPTO25519 STREQUAL "libsodium")
-		target_link_libraries(${TGT} PUBLIC
-			sodium
-			)
+		if (TARGET unofficial-sodium::sodium)
+			target_link_libraries(${TGT} PUBLIC unofficial-sodium::sodium)
+		else()
+			target_link_libraries(${TGT} PUBLIC
+				sodium
+				)
+		endif()
 	endif()
 
 	target_compile_definitions(${TGT} PRIVATE
