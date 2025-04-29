@@ -166,7 +166,7 @@ protobuf_generate_cpp(GNS_COMMON_PROTO_SRCS GNS_COMMON_PROTO_HDRS ${GNS_COMMON_P
 protobuf_generate_cpp(GNS_CLIENTLIB_PROTO_SRCS GNS_CLIENTLIB_PROTO_HDRS ${GNS_CLIENTLIB_PROTOS})
 
 function(gns_set_target_protobuf_properties TGT )
-	target_link_libraries(${TGT} PUBLIC
+	target_link_libraries(${TGT} PRIVATE
 		protobuf::libprotobuf
 		Threads::Threads
 		)
