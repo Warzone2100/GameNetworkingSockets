@@ -260,7 +260,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 endif()
 
 function(gns_set_target_protobuf_properties TGT )
-	target_link_libraries(${TGT} PUBLIC
+	target_link_libraries(${TGT} PRIVATE
 		protobuf::libprotobuf
 		Threads::Threads
 		)
