@@ -119,6 +119,9 @@ typedef char SteamNetworkingErrMsg[ 1024 ];
 		// it should work, I would appreciate the help.
 		#define PlatformSupportsRecvTOS() false
 
+	#elif IsBSD()
+		#define USE_POLL
+
 	#else
 		#define USE_EPOLL
 		#include <sys/epoll.h>

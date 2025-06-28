@@ -166,6 +166,9 @@
 #elif defined( LINUX ) || defined( __LINUX__ ) || defined(linux) || defined(__linux) || defined(__linux__)
 	#define IsLinux() true
 	#define IsPosix() true
+#elif defined(__FreeBSD__) || defined(__DragonFly__) || defined(__OpenBSD__) || defined(__NetBSD__)
+	#define IsBSD() true
+	#define IsPosix() true
 #elif defined( _POSIX_VERSION ) || defined( POSIX ) || defined( VALVE_POSIX )
 	#define IsPosix() true
 #else
@@ -222,6 +225,9 @@
 #endif
 #ifndef IsLinux
 	#define IsLinux() false
+#endif
+#ifndef IsBSD
+	#define IsBSD() false
 #endif
 #ifndef IsPosix
 	#define IsPosix() false

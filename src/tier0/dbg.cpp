@@ -88,6 +88,8 @@ bool Plat_IsInDebugSession()
 	// NDA material
 #elif IsNintendoSwitch()
 	return false;
+#elif IsBSD()
+	return false;
 #else
 	#error "HALP"
 #endif
