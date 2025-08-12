@@ -1730,14 +1730,18 @@ void CSteamNetworkingSockets::InternalQueueCallback( int nCallback, int cbCallba
 		AssertMsg( false, "Callback doesn't fit!" );
 		return;
 	}
-	AssertMsg( len( m_vecPendingCallbacks ) < 100, "Callbacks backing up and not being checked.  Need to check them more frequently!" );
+	
+	int pendingCallbacksLen;
 
 	m_mutexPendingCallbacks.lock();
+	pendingCallbacksLen = len( m_vecPendingCallbacks );
 	QueuedCallback &q = *push_back_get_ptr( m_vecPendingCallbacks );
 	q.nCallback = nCallback;
 	q.fnCallback = fnRegisteredFunctionPtr;
 	memcpy( q.data, pvCallback, cbCallback );
 	m_mutexPendingCallbacks.unlock();
+
+	AssertMsg( pendingCallbacksLen < 100, "Callbacks backing up and not being checked.  Need to check them more frequently!" );
 }
 
 #ifndef STEAMNETWORKINGSOCKETS_ENABLE_FAKEIP
