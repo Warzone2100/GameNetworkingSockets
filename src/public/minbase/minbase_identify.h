@@ -190,6 +190,12 @@
 #elif defined(__OpenBSD__)
 	#define IsOpenBSD() true
 	#define IsPosix() true
+#elif defined(__NetBSD__)
+	#define IsNetBSD() true
+	#define IsPosix() true
+#elif defined(__DragonFly__)
+	#define IsDragonFly() true
+	#define IsPosix() true
 #elif defined( _POSIX_VERSION ) || defined( POSIX ) || defined( VALVE_POSIX )
 	#define IsPosix() true
 #else
@@ -258,6 +264,12 @@
 #endif
 #ifndef IsOpenBSD
 	#define IsOpenBSD() false
+#endif
+#ifndef IsNetBSD
+	#define IsNetBSD() false
+#endif
+#ifndef IsDragonFly
+	#define IsDragonFly() false
 #endif
 
 // Detect ARM

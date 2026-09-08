@@ -2480,6 +2480,10 @@ const char *CSteamNetworkingUtils::GetPlatformString()
 		return "freebsd";
 	#elif IsOpenBSD()
 		return "openbsd";
+	#elif IsNetBSD()
+		return "netbsd";
+	#elif IsDragonFly()
+		return "dragonfly";
 	#else
 		#error "Unknown platform"
 	#endif

@@ -405,6 +405,10 @@ macro(set_clientlib_target_properties GNS_TARGET)
 
 	elseif(CMAKE_SYSTEM_NAME MATCHES OpenBSD)
 
+	elseif(CMAKE_SYSTEM_NAME MATCHES NetBSD)
+
+	elseif(CMAKE_SYSTEM_NAME MATCHES DragonFly)
+
 	elseif(CMAKE_SYSTEM_NAME MATCHES Windows)
 		if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 			get_target_property(TARGET_TYPE ${GNS_TARGET} TYPE)

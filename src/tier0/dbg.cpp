@@ -91,6 +91,9 @@ bool Plat_IsInDebugSession()
 	if (sysctl(mib, 4, &info, &size, NULL, 0) == -1)
 	    return false;
 	return ((info.p_psflags & PS_TRACED) != 0);
+#elif IsNetBSD() || IsDragonFly()
+	// Not implemented yet
+	return false;
 #elif IsLinux()
 	static FILE *fp;
 	if ( !fp )
