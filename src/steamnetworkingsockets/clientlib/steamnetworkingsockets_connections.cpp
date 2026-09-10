@@ -1325,6 +1325,26 @@ void CSteamNetworkConnectionBase::FinalizeLocalCrypto()
 	CheckScheduleDiagnosticsUpdateASAP();
 }
 
+void CSteamNetworkConnectionBase::LockInSingleCipherForSocketPair()
+{
+	AssertLocksHeldByCurrentThread( "LockInSingleCipherForSocketPair" );
+	Assert( !m_bConnectionInitiatedRemotely );
+	Assert( !m_bCryptKeysValid );
+	Assert( m_msgCryptLocal.ciphers_size() > 0 );
+	if ( m_msgCryptLocal.ciphers_size() <= 1 )
+		return;
+
+	// Keep only the most preferred cipher
+	ESteamNetworkingSocketsCipher eCipher = m_msgCryptLocal.ciphers( 0 );
+	m_msgCryptLocal.clear_ciphers();
+	m_msgCryptLocal.add_ciphers( eCipher );
+
+	// Redo the signed crypt info.
+	// (This generates a fresh key exchange keypair, which is fine since nothing has been exchanged with the peer yet.)
+	m_msgSignedCryptLocal.Clear();
+	FinalizeLocalCrypto();
+}
+
 void CSteamNetworkConnectionBase::SetLocalCertUnsigned()
 {
 	AssertLocksHeldByCurrentThread();
@@ -3947,6 +3967,7 @@ failed:
 			AssertMsg1( false, "CSteamNetworkConnectionPipe::BInitConnection failed.  %s", errMsg );
 			goto failed;
 		}
+		p->LockInSingleCipherForSocketPair();
 		p->m_identityRemote = q->m_identityLocal;
 		p->m_unConnectionIDRemote = q->m_unConnectionIDLocal;
 	}

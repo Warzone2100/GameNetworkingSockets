@@ -1905,6 +1905,7 @@ failed:
 			AssertMsg1( false, "CSteamNetworkConnectionlocalhostLoopback::BInitConnection failed.  %s", errMsg );
 			goto failed;
 		}
+		pConn[i]->LockInSingleCipherForSocketPair();
 	}
 
 	// Tie the connections to each other, and mark them as connected

@@ -801,6 +801,14 @@ protected:
 	void FinalizeLocalCrypto();
 	void SetCryptoCipherList();
 
+	/// Used when creating a socket pair.  Both connections are initialized as
+	/// "clients" and so advertise their full list of accepted ciphers - but
+	/// there is no server to pick one, and the client side of the handshake
+	/// requires the peer to have selected exactly one cipher.  Both ends of a
+	/// socket pair are created with the same config, so just lock in the most
+	/// preferred cipher and re-finalize the local crypt info.
+	void LockInSingleCipherForSocketPair();
+
 	// Remote cert and crypt info.  We need to hand on to the original serialized version briefly
 	std::string m_sCertRemote;
 	std::string m_sCryptRemote;
